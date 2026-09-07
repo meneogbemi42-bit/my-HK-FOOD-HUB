@@ -1,0 +1,18 @@
+/* Hide scrollbar for category list but keep functionality */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Smooth transitions for cart slide-out */
+.cart-panel {
+    transition: transform 0.3s ease-in-out;
+}
+
+.cart-overlay {
+    transition: opacity 0.3s ease-in-out;
+}
