@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HK African Food Hub</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- CSS: Tailwind via CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CSS: Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+</head>
+
+<body class="min-h-screen bg-neutral-50 font-sans text-neutral-800 overflow-x-hidden">
+
+    <!-- HTML STRUCTURE -->
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-40 w-full bg-white shadow-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-20 items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer">
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 text-white font-bold text-xl">
+                        HK
+                    </div>
+                    <span class="text-2xl font-black tracking-tight text-neutral-900">
+                        AFRICAN <span class="text-orange-600">FOOD HUB</span>
+                    </span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#"
+                        class="text-sm font-semibold text-neutral-900 hover:text-orange-600 transition-colors">Shop</a>
+                    <a href="#"
+                        class="text-sm font-semibold text-neutral-500 hover:text-orange-600 transition-colors">Categories</a>
+                    <a href="#"
+                        class="text-sm font-semibold text-neutral-500 hover:text-orange-600 transition-colors">About
+                        Us</a>
+                    <a href="#"
+                        class="text-sm font-semibold text-neutral-500 hover:text-orange-600 transition-colors">Contact</a>
+                </div>
+
+                <!-- Right side icons -->
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex relative group">
+                        <input type="text" id="desktop-search" placeholder="Search products..."
+                            class="pl-10 pr-4 py-2 bg-neutral-100 border-transparent rounded-full text-sm focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none transition-all w-64">
+                        <i data-lucide="search"
+                            class="absolute left-3 top-2.5 h-4 w-4 text-neutral-400 group-focus-within:text-orange-500"></i>
+                    </div>
+
+                    <button id="cart-btn" class="relative p-2 text-neutral-600 hover:text-orange-600 transition-colors">
+                        <i data-lucide="shopping-cart" class="h-6 w-6"></i>
+                        <span id="cart-badge"
+                            class="hidden absolute top-0 right-0 items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-orange-600 rounded-full">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-neutral-600">
+                        <i data-lucide="menu" id="mobile-menu-icon" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-100 bg-white px-4 pt-2 pb-4 space-y-1">
+            <div class="relative mb-4 mt-2">
+                <input type="text" id="mobile-search" placeholder="Search products..."
+                    class="w-full pl-10 pr-4 py-3 bg-neutral-100 border-transparent rounded-lg text-sm focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none transition-all">
+                <i data-lucide="search" class="absolute left-3 top-3.5 h-5 w-5 text-neutral-400"></i>
+            </div>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-neutral-900 bg-neutral-50">Shop</a>
+            <a href="#"
+                class="block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:bg-neutral-50">Categories</a>
+            <a href="#"
+                class="block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:bg-neutral-50">About
+                Us</a>
+            <a href="#"
+                class="block px-3 py-2 rounded-md text-base font-medium text-neutral-500 hover:bg-neutral-50">Contact</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <div class="relative bg-neutral-900 h-[500px]">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000"
+            alt="African Spices and Market"
+            class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">
+        <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent"></div>
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center items-start">
+            <span
+                class="text-orange-500 font-bold tracking-wider uppercase text-sm mb-4 bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">
+                Premium Quality Guaranteed
+            </span>
+            <h1 class="text-4xl md:text-6xl font-black text-white max-w-2xl leading-tight mb-6">
+                Taste the Authentic Flavors of Africa
+            </h1>
+            <p class="text-lg md:text-xl text-neutral-300 max-w-xl mb-8">
+                Your one-stop shop for fresh, high-quality African groceries delivered straight to your door. From Garri
+                to Egusi, we have it all.
+            </p>
+            <button onclick="document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' })"
+                class="bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-orange-600/25 transition-all transform hover:-translate-y-1 flex items-center gap-2">
+                Shop Now <i data-lucide="chevron-right" class="h-5 w-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16" id="products-section">
+
+        <!-- Categories -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-bold text-neutral-900 mb-6">Browse Categories</h2>
+            <div id="category-container" class="flex overflow-x-auto pb-4 gap-3 hide-scrollbar">
+                <!-- Categories injected via JS -->
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div>
+            <div class="flex justify-between items-end mb-6">
+                <h2 id="section-title" class="text-2xl font-bold text-neutral-900">Featured Products</h2>
+                <span id="result-count" class="text-sm text-neutral-500 font-medium">Showing 0 results</span>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
+                <!-- Products injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- CART SLIDE-OUT -->
+    <div id="cart-container" class="fixed inset-0 z-50 overflow-hidden pointer-events-none">
+        <!-- Overlay -->
+        <div id="cart-overlay" class="cart-overlay absolute inset-0 bg-neutral-900/60 backdrop-blur-sm opacity-0"
+            onclick="closeCart()"></div>
+
+        <!-- Slide-out Panel -->
+        <div class="fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div id="cart-panel"
+                class="cart-panel w-screen max-w-md transform translate-x-full ease-in-out pointer-events-auto">
+                <div class="flex h-full flex-col bg-white shadow-2xl">
+                    <!-- Cart Header -->
+                    <div class="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
+                        <h2 class="text-xl font-black text-neutral-900 flex items-center gap-2">
+                            <i data-lucide="shopping-cart" class="h-6 w-6 text-orange-600"></i>
+                            Your Cart (<span id="cart-header-count">0</span>)
+                        </h2>
+                        <button onclick="closeCart()"
+                            class="p-2 -mr-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-full transition-colors">
+                            <i data-lucide="x" class="h-6 w-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Cart Items List -->
+                    <div class="flex-1 overflow-y-auto px-6 py-6">
+                        <div id="cart-items" class="space-y-6">
+                            <!-- Cart items injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Cart Footer -->
+                    <div id="cart-footer" class="hidden border-t border-neutral-100 bg-neutral-50 px-6 py-6">
+                        <div class="flex justify-between text-lg font-bold text-neutral-900 mb-2">
+                            <p>Subtotal</p>
+                            <p>$<span id="cart-subtotal">0.00</span></p>
+                        </div>
+                        <p class="text-sm text-neutral-500 mb-6">Shipping and taxes calculated at checkout.</p>
+                        <button
+                            class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-orange-600/25 transition-all flex justify-center items-center gap-2">
+                            Proceed to Checkout <i data-lucide="chevron-right" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-neutral-950 text-neutral-300 pt-16 pb-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div
+                            class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-600 text-white font-bold text-sm">
+                            HK</div>
+                        <span class="text-xl font-black tracking-tight text-white">AFRICAN <span
+                                class="text-orange-600">FOOD HUB</span></span>
+                    </div>
+                    <p class="text-neutral-400 max-w-sm mb-6">
+                        Bringing the rich, authentic, and vibrant tastes of Africa directly to your kitchen. Quality
+                        groceries, affordable prices.
+                    </p>
+                    <div class="flex gap-4">
+                        <div
+                            class="h-10 w-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-orange-600 cursor-pointer transition-colors">
+                            <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </div>
+                        <div
+                            class="h-10 w-10 bg-neutral-800 rounded-full flex items-center justify-center hover:bg-orange-600 cursor-pointer transition-colors">
+                            <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Shop All</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Wholesale</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Delivery Info</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Contact Us</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="map-pin" class="h-5 w-5 text-orange-500 mt-0.5"></i>
+                            <span>123 Market Street, London, UK</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="phone" class="h-5 w-5 text-orange-500"></i>
+                            <span>+44 20 1234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="mail" class="h-5 w-5 text-orange-500"></i>
+                            <span>hello@hkafricanfood.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-neutral-500">
+                <p>© 2026 HK African Food Hub. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
