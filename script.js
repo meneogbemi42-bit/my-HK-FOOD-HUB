@@ -1,5 +1,13 @@
-// --- MOCK DATA ---
+// DATA DEFINITIONS
 const CATEGORIES = ["All", "Grains & Flours", "Spices & Seeds", "Oils", "Fresh Produce", "Meat & Seafood"];
+
+const CATEGORY_META = [
+    { title: "Grains & Flours", count: "12 Products", desc: "Authentic Garri, Yam flour, Plantain flour, and Semolina.", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=600" },
+    { title: "Spices & Seeds", count: "18 Products", desc: "Suya pepper mix, Egusi, Ogbono, and Suya seasonings.", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600" },
+    { title: "Oils", count: "8 Products", desc: "Unrefined red palm oil, groundnut oils, and coconut oil.", image: "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?auto=format&fit=crop&q=80&w=600" },
+    { title: "Fresh Produce", count: "15 Products", desc: "Fresh plantains, yam tubers, scotch bonnets, and bitter leaves.", image: "https://images.unsplash.com/photo-1604543519967-0eb2db2a60ce?auto=format&fit=crop&q=80&w=600" },
+    { title: "Meat & Seafood", count: "10 Products", desc: "Dried smoked catfish, crayfish, stockfish, and smoked turkey.", image: "https://images.unsplash.com/photo-1511189970929-1836c2438cce?auto=format&fit=crop&q=80&w=600" }
+];
 
 const PRODUCTS = [
     { id: 1, name: "Premium Garri (Yellow)", price: 15.99, category: "Grains & Flours", rating: 4.8, reviews: 124, image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=600" },
@@ -12,236 +20,191 @@ const PRODUCTS = [
     { id: 8, name: "Washed Bitter Leaf", price: 6.99, category: "Fresh Produce", rating: 4.3, reviews: 23, image: "https://images.unsplash.com/photo-1550828553-61cefc487cc5?auto=format&fit=crop&q=80&w=600" }
 ];
 
-// --- STATE ---
+// STATE
+let activeView = "shop";
 let cart = [];
 let selectedCategory = "All";
 let searchQuery = "";
 let isMobileMenuOpen = false;
 
-// --- INITIALIZE UI ---
+// INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
     renderCategories();
+    renderCategoryGrid();
     renderProducts();
     lucide.createIcons();
-    
+
     // Event Listeners
     document.getElementById('cart-btn').addEventListener('click', openCart);
     document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
-    
+
     document.getElementById('desktop-search').addEventListener('input', (e) => {
         searchQuery = e.target.value;
-        document.getElementById('mobile-search').value = searchQuery; // sync
+        document.getElementById('mobile-search').value = searchQuery;
+        if (activeView !== 'shop') navigateTo('shop');
         renderProducts();
     });
 
     document.getElementById('mobile-search').addEventListener('input', (e) => {
         searchQuery = e.target.value;
-        document.getElementById('desktop-search').value = searchQuery; // sync
+        document.getElementById('desktop-search').value = searchQuery;
+        if (activeView !== 'shop') navigateTo('shop');
         renderProducts();
     });
 });
 
-// --- RENDER FUNCTIONS ---
-function renderCategories() {
-    const container = document.getElementById('category-container');
-    container.innerHTML = CATEGORIES.map(category => `
-        <button 
-            onclick="setCategory('${category}')" 
-            class="whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                selectedCategory === category 
-                ? 'bg-neutral-900 text-white shadow-md' 
-                : 'bg-white text-neutral-600 hover:bg-orange-50 hover:text-orange-600 border border-neutral-200'
-            }"
-        >
-            ${category}
-        </button>
-    `).join('');
+// NAVIGATION ROUTER
+function navigateTo(pageName) {
+    activeView = pageName;
+
+    // Hide all page views
+    document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+
+    // Show target page view
+    const target = document.getElementById(`view-${pageName}`);
+    if (target) target.classList.remove('hidden');
+
+    // Update desktop nav styles
+    document.querySelectorAll('#desktop-nav .nav-link').forEach(btn => {
+        const navType = btn.getAttribute('data-nav');
+        if (navType === pageName) {
+            btn.className = "nav-link text-sm font-bold text-orange-600 border-b-2 border-orange-600 pb-1 transition-all";
+        } else {
+            btn.className = "nav-link text-sm font-semibold text-neutral-500 hover:text-orange-600 pb-1 transition-all";
+        }
+    });
+
+    // Close mobile menu if open
+    if (isMobileMenuOpen) toggleMobileMenu();
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function setCategory(category) {
-    selectedCategory = category;
-    renderCategories(); // update active state
+// RENDER SHOP CATEGORY BUTTONS
+function renderCategories() {
+    const container = document.getElementById('category-container');
+    if (!container) return;
+
+    container.innerHTML = CATEGORIES.map(cat => {
+        const isActive = cat === selectedCategory;
+        const activeClass = "bg-orange-600 text-white shadow-md shadow-orange-600/20 font-bold";
+        const inactiveClass = "bg-white text-neutral-600 border border-neutral-200 hover:border-orange-500 hover:text-orange-600 font-semibold";
+
+        return `
+            <button 
+                onclick="filterByCategory('${cat}')" 
+                class="px-5 py-2.5 rounded-full text-sm whitespace-nowrap transition-all ${isActive ? activeClass : inactiveClass}"
+            >
+                ${cat}
+            </button>
+        `;
+    }).join('');
+}
+
+function filterByCategory(catName) {
+    selectedCategory = catName;
+    renderCategories();
     renderProducts();
 }
 
+// RENDER CATEGORIES PAGE GRID
+function selectCategoryFromGrid(catName) {
+    selectedCategory = catName;
+    renderCategories();
+    navigateTo('shop');
+    renderProducts();
+}
+
+function renderCategoryGrid() {
+    const grid = document.getElementById('category-cards-grid');
+    if (!grid) return;
+
+    grid.innerHTML = CATEGORY_META.map(cat => `
+        <div onclick="selectCategoryFromGrid('${cat.title}')" class="group bg-white rounded-3xl border border-neutral-100 overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col">
+            <div class="h-48 overflow-hidden relative">
+                <img src="${cat.image}" alt="${cat.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <span class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-neutral-900">${cat.count}</span>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-bold text-neutral-900 mb-2">${cat.title}</h3>
+                <p class="text-neutral-500 text-sm mb-6 flex-grow">${cat.desc}</p>
+                <div class="flex items-center text-orange-600 font-bold text-sm group-hover:gap-2 transition-all">
+                    <span>Browse Category</span>
+                    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// RENDER PRODUCT CARDS
 function renderProducts() {
     const grid = document.getElementById('product-grid');
-    
-    // Filter logic
-    const filteredProducts = PRODUCTS.filter(product => {
+    const title = document.getElementById('section-title');
+    const count = document.getElementById('result-count');
+    if (!grid) return;
+
+    // Filter products by category and search query
+    const filtered = PRODUCTS.filter(product => {
         const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
-        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.category.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
-    // Update section title and count
-    document.getElementById('section-title').textContent = selectedCategory === "All" ? "Featured Products" : selectedCategory;
-    document.getElementById('result-count').textContent = `Showing ${filteredProducts.length} results`;
+    if (title) title.innerText = searchQuery ? `Search Results for "${searchQuery}"` : (selectedCategory === "All" ? "Featured Products" : selectedCategory);
+    if (count) count.innerText = `Showing ${filtered.length} ${filtered.length === 1 ? 'result' : 'results'}`;
 
-    if (filteredProducts.length === 0) {
-        // Empty state HTML setup to span fully
-        grid.className = "col-span-full"; 
+    if (filtered.length === 0) {
         grid.innerHTML = `
-            <div class="text-center py-20 bg-white rounded-2xl border border-neutral-100 w-full">
-                <p class="text-neutral-500 text-lg">No products found matching your search.</p>
-                <button onclick="clearFilters()" class="mt-4 text-orange-600 font-semibold hover:underline">
-                    Clear filters
-                </button>
+            <div class="col-span-full text-center py-16 bg-white rounded-3xl border border-neutral-100">
+                <i data-lucide="package-search" class="h-12 w-12 text-neutral-300 mx-auto mb-3"></i>
+                <h3 class="text-lg font-bold text-neutral-800 mb-1">No products found</h3>
+                <p class="text-neutral-500 text-sm">Try adjusting your search terms or selecting a different category.</p>
             </div>
         `;
     } else {
-        // Restore grid classes
-        grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8";
-        grid.innerHTML = filteredProducts.map(product => `
-            <div class="group flex flex-col bg-white rounded-2xl border border-neutral-100 overflow-hidden hover:shadow-xl transition-all duration-300">
-                <div class="relative aspect-square overflow-hidden bg-neutral-100">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold text-neutral-900 shadow-sm">
+        grid.innerHTML = filtered.map(product => `
+            <div class="group bg-white rounded-2xl border border-neutral-100 overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col">
+                <div class="h-56 bg-neutral-100 relative overflow-hidden">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <span class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-full text-xs font-semibold text-neutral-700">
                         ${product.category}
-                    </div>
+                    </span>
                 </div>
                 <div class="p-5 flex flex-col flex-grow">
-                    <div class="flex items-center gap-1 mb-2">
-                        <i data-lucide="star" class="h-4 w-4 fill-orange-400 text-orange-400"></i>
-                        <span class="text-sm font-bold text-neutral-700">${product.rating}</span>
-                        <span class="text-xs text-neutral-400">(${product.reviews})</span>
+                    <div class="flex items-center gap-1 text-amber-500 text-xs font-bold mb-2">
+                        <i data-lucide="star" class="h-3.5 w-3.5 fill-amber-500"></i>
+                        <span>${product.rating}</span>
+                        <span class="text-neutral-400 font-normal">(${product.reviews})</span>
                     </div>
-                    <h3 class="text-lg font-bold text-neutral-900 mb-1 leading-tight line-clamp-2">${product.name}</h3>
-                    <p class="text-2xl font-black text-orange-600 mt-auto pt-4">$${product.price.toFixed(2)}</p>
-                    <button onclick="addToCart(${product.id})" class="mt-4 w-full bg-neutral-900 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 group-hover:shadow-md">
-                        <i data-lucide="shopping-cart" class="h-5 w-5"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    // Re-initialize icons for newly rendered content
-    lucide.createIcons();
-}
-
-function clearFilters() {
-    searchQuery = "";
-    document.getElementById('desktop-search').value = "";
-    document.getElementById('mobile-search').value = "";
-    setCategory("All");
-}
-
-// --- CART LOGIC ---
-function addToCart(productId) {
-    const product = PRODUCTS.find(p => p.id === productId);
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    
-    updateCartUI();
-    openCart();
-}
-
-function updateQuantity(id, delta) {
-    const itemIndex = cart.findIndex(item => item.id === id);
-    if (itemIndex > -1) {
-        const newQuantity = cart[itemIndex].quantity + delta;
-        if (newQuantity > 0) {
-            cart[itemIndex].quantity = newQuantity;
-        }
-    }
-    updateCartUI();
-}
-
-function removeFromCart(id) {
-    cart = cart.filter(item => item.id !== id);
-    updateCartUI();
-}
-
-function updateCartUI() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartFooter = document.getElementById('cart-footer');
-    const cartBadge = document.getElementById('cart-badge');
-    
-    const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    
-    // Update Header Counts
-    document.getElementById('cart-header-count').textContent = itemCount;
-    
-    // Update Navbar Badge
-    if (itemCount > 0) {
-        cartBadge.textContent = itemCount;
-        cartBadge.classList.remove('hidden');
-        cartBadge.classList.add('flex');
-    } else {
-        cartBadge.classList.add('hidden');
-        cartBadge.classList.remove('flex');
-    }
-
-    // Render Cart Content
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-center space-y-4 py-12">
-                <div class="h-24 w-24 bg-orange-50 rounded-full flex items-center justify-center mb-2">
-                    <i data-lucide="shopping-cart" class="h-10 w-10 text-orange-300"></i>
-                </div>
-                <p class="text-lg font-medium text-neutral-900">Your cart is empty</p>
-                <p class="text-sm text-neutral-500">Looks like you haven't added any authentic flavors yet.</p>
-                <button onclick="closeCart()" class="mt-4 px-6 py-2 bg-neutral-900 text-white font-semibold rounded-full hover:bg-orange-600 transition-colors">
-                    Start Shopping
-                </button>
-            </div>
-        `;
-        cartFooter.classList.add('hidden');
-    } else {
-        cartItemsContainer.innerHTML = cart.map(item => `
-            <div class="flex gap-4 bg-white">
-                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
-                    <img src="${item.image}" alt="${item.name}" class="h-full w-full object-cover object-center">
-                </div>
-                <div class="flex flex-1 flex-col">
-                    <div>
-                        <div class="flex justify-between text-base font-bold text-neutral-900">
-                            <h3>${item.name}</h3>
-                            <p class="ml-4 text-orange-600">$${(item.price * item.quantity).toFixed(2)}</p>
-                        </div>
-                        <p class="mt-1 text-sm text-neutral-500">${item.category}</p>
-                    </div>
-                    <div class="flex flex-1 items-end justify-between text-sm">
-                        <div class="flex items-center border border-neutral-200 rounded-lg">
-                            <button onclick="updateQuantity(${item.id}, -1)" class="p-1.5 text-neutral-500 hover:text-orange-600 hover:bg-neutral-50 rounded-l-lg">
-                                <i data-lucide="minus" class="h-4 w-4"></i>
-                            </button>
-                            <span class="px-3 font-semibold text-neutral-900 w-8 text-center">${item.quantity}</span>
-                            <button onclick="updateQuantity(${item.id}, 1)" class="p-1.5 text-neutral-500 hover:text-orange-600 hover:bg-neutral-50 rounded-r-lg">
-                                <i data-lucide="plus" class="h-4 w-4"></i>
-                            </button>
-                        </div>
-                        <button type="button" onclick="removeFromCart(${item.id})" class="font-medium text-neutral-400 hover:text-red-600 flex items-center gap-1 transition-colors">
-                            <i data-lucide="trash-2" class="h-4 w-4"></i> <span class="hidden sm:inline">Remove</span>
+                    <h3 class="font-bold text-neutral-900 text-base mb-3 group-hover:text-orange-600 transition-colors flex-grow">
+                        ${product.name}
+                    </h3>
+                    <div class="flex items-center justify-between pt-2 border-t border-neutral-100">
+                        <span class="text-xl font-black text-neutral-900">$${product.price.toFixed(2)}</span>
+                        <button 
+                            onclick="addToCart(${product.id})" 
+                            class="bg-orange-600 hover:bg-orange-700 active:scale-95 text-white p-2.5 rounded-xl transition-all shadow-md hover:shadow-orange-600/30 flex items-center gap-1"
+                        >
+                            <i data-lucide="plus" class="h-5 w-5"></i>
                         </button>
                     </div>
                 </div>
             </div>
         `).join('');
-        
-        document.getElementById('cart-subtotal').textContent = subtotal.toFixed(2);
-        cartFooter.classList.remove('hidden');
     }
-    
+
     lucide.createIcons();
 }
 
-// --- UI TOGGLES ---
+// CART MANAGEMENT
 function openCart() {
     const container = document.getElementById('cart-container');
-    const panel = document.getElementById('cart-panel');
     const overlay = document.getElementById('cart-overlay');
-    
-    // Re-render to ensure latest state is shown
-    updateCartUI(); 
-    
+    const panel = document.getElementById('cart-panel');
+
     container.classList.remove('pointer-events-none');
     overlay.classList.remove('opacity-0');
     panel.classList.remove('translate-x-full');
@@ -249,32 +212,124 @@ function openCart() {
 
 function closeCart() {
     const container = document.getElementById('cart-container');
-    const panel = document.getElementById('cart-panel');
     const overlay = document.getElementById('cart-overlay');
-    
+    const panel = document.getElementById('cart-panel');
+
     overlay.classList.add('opacity-0');
     panel.classList.add('translate-x-full');
-    
-    // Wait for transition to finish before removing pointer events
     setTimeout(() => {
         container.classList.add('pointer-events-none');
     }, 300);
 }
 
+function addToCart(productId) {
+    const item = cart.find(i => i.id === productId);
+    if (item) {
+        item.quantity += 1;
+    } else {
+        const product = PRODUCTS.find(p => p.id === productId);
+        if (product) cart.push({ ...product, quantity: 1 });
+    }
+
+    updateCartUI();
+    openCart();
+}
+
+function updateQuantity(productId, delta) {
+    const item = cart.find(i => i.id === productId);
+    if (!item) return;
+
+    item.quantity += delta;
+    if (item.quantity <= 0) {
+        cart = cart.filter(i => i.id !== productId);
+    }
+
+    updateCartUI();
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(i => i.id !== productId);
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Update cart badges
+    const badge = document.getElementById('cart-badge');
+    const headerCount = document.getElementById('cart-header-count');
+
+    if (badge) {
+        badge.innerText = totalItems;
+        badge.classList.toggle('hidden', totalItems === 0);
+        badge.classList.toggle('flex', totalItems > 0);
+    }
+    if (headerCount) headerCount.innerText = totalItems;
+
+    // Render cart items
+    const itemsContainer = document.getElementById('cart-items');
+    const footer = document.getElementById('cart-footer');
+    const subtotalEl = document.getElementById('cart-subtotal');
+
+    if (subtotalEl) subtotalEl.innerText = subtotal.toFixed(2);
+
+    if (!itemsContainer) return;
+
+    if (cart.length === 0) {
+        footer.classList.add('hidden');
+        itemsContainer.innerHTML = `
+            <div class="text-center py-12">
+                <i data-lucide="shopping-bag" class="h-12 w-12 text-neutral-300 mx-auto mb-3"></i>
+                <p class="text-neutral-500 font-medium text-sm">Your cart is empty.</p>
+                <button onclick="closeCart()" class="mt-4 text-sm font-bold text-orange-600 hover:underline">Start Shopping</button>
+            </div>
+        `;
+    } else {
+        footer.classList.remove('hidden');
+        itemsContainer.innerHTML = cart.map(item => `
+            <div class="flex gap-4 items-center border-b border-neutral-100 pb-4">
+                <img src="${item.image}" alt="${item.name}" class="h-16 w-16 rounded-xl object-cover bg-neutral-100">
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-bold text-neutral-900 text-sm truncate">${item.name}</h4>
+                    <p class="text-orange-600 font-bold text-sm mt-0.5">$${(item.price * item.quantity).toFixed(2)}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="h-6 w-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center text-xs font-bold transition-colors">-</button>
+                        <span class="text-xs font-bold text-neutral-800 px-1">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="h-6 w-6 rounded-md bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center text-xs font-bold transition-colors">+</button>
+                    </div>
+                </div>
+                <button onclick="removeFromCart(${item.id})" class="p-1 text-neutral-400 hover:text-red-500 transition-colors">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    lucide.createIcons();
+}
+
+// MOBILE MENU TOGGLE
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
     const icon = document.getElementById('mobile-menu-icon');
-    
+
     isMobileMenuOpen = !isMobileMenuOpen;
-    
-    if (isMobileMenuOpen) {
-        menu.classList.remove('hidden');
-        // update icon to 'x'
-        icon.setAttribute('data-lucide', 'x');
-    } else {
-        menu.classList.add('hidden');
-        // update icon to 'menu'
-        icon.setAttribute('data-lucide', 'menu');
+    menu.classList.toggle('hidden', !isMobileMenuOpen);
+
+    if (icon) {
+        icon.setAttribute('data-lucide', isMobileMenuOpen ? 'x' : 'menu');
+        lucide.createIcons();
     }
-    lucide.createIcons();
 }
+
+// CONTACT FORM HANDLER
+function handleContactSubmit(event) {
+    event.preventDefault();
+    const successMsg = document.getElementById('contact-success');
+    if (successMsg) {
+        successMsg.classList.remove('hidden');
+        event.target.reset();
+        setTimeout(() => successMsg.classList.add('hidden'), 5000);
+    }
+} 
